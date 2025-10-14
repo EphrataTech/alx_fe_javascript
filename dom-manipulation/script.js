@@ -20,6 +20,10 @@ function showRandomQuote() {
   quoteDisplay.innerHTML = `<p>"${quote.text}"</p><small>— ${quote.category}</small>`;
 }
 
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
 // Add a new quote
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
@@ -34,10 +38,27 @@ function addQuote() {
   }
 
   quotes.push({ text: newText, category: newCategory });
+  saveQuotes();
   textInput.value = "";
   categoryInput.value = "";
   alert("Quote added successfully!");
 }
+
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+    if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  }
+}
+
+// Load quotes from localStorage on page load
+loadQuotes();
+showRandomQuote();
+
+
+
+
+  
 
 // Create the form dynamically (optional enhancement)
 function createAddQuoteForm() {
