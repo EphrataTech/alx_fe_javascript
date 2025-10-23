@@ -198,12 +198,13 @@ function syncQuotes(serverQuotes) {
     }
   });
 
-  if (updated) {
-    saveQuotes();
-    populateCategories();
-    notifyUser("New quotes synced from server.");
-    showRandomQuote();
-  }
+ if (updated) {
+  saveQuotes();
+  populateCategories();
+  notifyUser("Quotes synced with server!");
+  showRandomQuote();
+}
+
 }
 
 // Notification UI
