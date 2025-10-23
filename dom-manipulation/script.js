@@ -182,20 +182,20 @@ if (importInput) importInput.addEventListener("change", importFromJsonFile);
 
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Replace with actual mock API if needed
 
-function fetchQuotesFromServer() {
-  fetch(SERVER_URL)
-    .then(response => response.json())
-    .then(serverQuotes => {
-      // Simulate quote format
-      const formattedQuotes = serverQuotes.map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
-
-      syncQuotes(formattedQuotes);
-    })
-    .catch(error => console.error("Server fetch failed:", error));
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    const formattedQuotes = serverQuotes.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+    syncQuotes(formattedQuotes);
+  } catch (error) {
+    console.error("Server fetch failed:", error);
+  }
 }
+
 
 // Poll every 30 seconds
 setInterval(fetchQuotesFromServer, 30000);
@@ -248,5 +248,5 @@ restoreLastFilter();
 showRandomQuote();  
 createAddQuoteForm();
 createImportExportButtons();
-createAddQuoteForm();
+
 
