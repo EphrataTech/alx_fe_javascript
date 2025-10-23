@@ -75,8 +75,48 @@ function createAddQuoteForm() {
   document.getElementById("addQuoteBtn").addEventListener("click", addQuote);
 }
 
+function exportToJsonFile() {
+  
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const downloadLink = document.createElement("a");
+  downloadLink.href = url;
+  downloadLink.download = "quotes.json";
+  downloadLink.click();
+
+  URL.revokeObjectURL(url); // Clean up
+  document.getElementById("exportQuotesBtn").addEventListener("click", exportToJsonFile);
+
+}
+
+function importFromJsonFile(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        alert("No file selected.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedQuotes = JSON.parse(e.target.result);
+            if (Array.isArray(importedQuotes)) {
+                quotes.push(...importedQuotes);
+                saveQuotes();
+                alert("Quotes imported successfully!");
+            } else {
+                alert("Invalid file format.");
+            }
+        } catch (error) {
+            alert("Error reading file: " + error.message);
+        };
+        reader.readAsText(file);
+    }
+}
 // Event listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
 
 // Optional: auto-create the form on load
-createAddQuoteForm();
+createAddQuoteForm()
