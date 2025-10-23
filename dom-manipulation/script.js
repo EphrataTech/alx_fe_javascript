@@ -179,6 +179,68 @@ if (exportBtn) exportBtn.addEventListener("click", exportToJsonFile);
 const importInput = document.getElementById("importQuotesInput");
 if (importInput) importInput.addEventListener("change", importFromJsonFile);
 
+
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Replace with actual mock API if needed
+
+function fetchQuotesFromServer() {
+  fetch(SERVER_URL)
+    .then(response => response.json())
+    .then(serverQuotes => {
+      // Simulate quote format
+      const formattedQuotes = serverQuotes.map(post => ({
+        text: post.title,
+        category: "Server"
+      }));
+
+      syncQuotes(formattedQuotes);
+    })
+    .catch(error => console.error("Server fetch failed:", error));
+}
+
+// Poll every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);
+
+
+function syncQuotes(serverQuotes) {
+  let updated = false;
+
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(localQuote =>
+      localQuote.text === serverQuote.text &&
+      localQuote.category === serverQuote.category
+    );
+
+    if (!exists) {
+      quotes.push(serverQuote);
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    saveQuotes();
+    notifyUser("New quotes synced from server.");
+    populateCategories(); // Update dropdown
+    showRandomQuote();    // Refresh display
+  }
+}
+
+
+function notifyUser(message) {
+  const notification = document.createElement("div");
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+  `;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 4000);
+}
+
 // Optional: auto-create the form on load
 loadQuotes();
 populateCategories();
