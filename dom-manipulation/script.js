@@ -1,11 +1,9 @@
-// Initial quotes array
 let quotes = [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" },
   { text: "Code is like humor. When you have to explain it, it’s bad.", category: "Programming" }
 ];
 
-// DOM references
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
@@ -111,21 +109,22 @@ function addQuote() {
   alert("Quote added successfully!");
 }
 
-// POST quote to server
-function postQuoteToServer(quote) {
-  fetch(SERVER_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(quote)
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log("Quote posted:", data);
+// POST quote to server using async/await
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+    const result = await response.json();
+    console.log("Quote posted:", result);
     notifyUser("Quote synced to server.");
-  })
-  .catch(error => console.error("POST failed:", error));
+  } catch (error) {
+    console.error("POST failed:", error);
+  }
 }
 
 // Export quotes to JSON
@@ -170,18 +169,19 @@ function importFromJsonFile(event) {
   reader.readAsText(file);
 }
 
-// Sync quotes from server
-function fetchQuotesFromServer() {
-  fetch(SERVER_URL)
-    .then(response => response.json())
-    .then(serverQuotes => {
-      const formattedQuotes = serverQuotes.map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
-      syncQuotes(formattedQuotes);
-    })
-    .catch(error => console.error("Server fetch failed:", error));
+// Fetch quotes from server using async/await
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    const formattedQuotes = serverQuotes.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+    syncQuotes(formattedQuotes);
+  } catch (error) {
+    console.error("Server fetch failed:", error);
+  }
 }
 
 // Merge server quotes
